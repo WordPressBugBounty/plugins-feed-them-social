@@ -3177,8 +3177,8 @@ img.instagram-feed-type-image-tab {
     }
 
     .feed-them-social-admin-input-label {
-        float: left!important;
-        display: inline-block;
+        /* float: left!important; */
+        /* display: inline-block; */
         padding-top: 12px!important;
         max-width: 165px!important;
         min-width: 165px!important
@@ -3313,7 +3313,6 @@ img.instagram-feed-type-image-tab {
 .tiktok-stats-hide, .tiktok-show-follow-button-hide {
     display:none;
 }
-
 
 .fts-full-screen-editing-wrap-active #poststuff #post-body.columns-2 {
     margin-right: 0;
