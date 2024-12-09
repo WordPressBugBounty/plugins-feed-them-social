@@ -141,12 +141,6 @@ class Feed_Them_Social {
         // Shorten words in Posts.
         new FeedThemSocialTruncateHTML();
 
-        // Backwards compatability.
-        new feedthemsocial\Backwards_Compat( $settings_functions );
-
-        // Upgrades
-        new feedthemsocial\FTS_Upgrades( $settings_functions );
-
 		// Updater Init.
 		new feedthemsocial\updater_init( $feed_functions );
 
@@ -154,7 +148,7 @@ class Feed_Them_Social {
 		new feedthemsocial\BlockLoader();
 
         // Cron Jobs
-        new feedthemsocial\Cron_Jobs( $feed_functions, $options_functions );
+        new feedthemsocial\Cron_Jobs( $feed_functions, $options_functions, $settings_functions, $feed_cache );
 	}
 
 	/**
@@ -222,10 +216,7 @@ class Feed_Them_Social {
 
 		// Plugin version. (Needs to be after BASENAME and ABS_PATH constants to work).
 		if ( ! defined( 'FEED_THEM_SOCIAL_VERSION' ) ) {
-			$plugin_data    = get_plugin_data( FEED_THEM_SOCIAL_PLUGIN_ABS_PATH );
-			$plugin_version = $plugin_data['Version'];
-
-			define( 'FEED_THEM_SOCIAL_VERSION', $plugin_version );
+			define( 'FEED_THEM_SOCIAL_VERSION', FTS_CURRENT_VERSION );
 		}
 
 		// Plugin Folder Path.
@@ -374,12 +365,6 @@ class Feed_Them_Social {
 		// Instagram Feed.
 		include FEED_THEM_SOCIAL_PLUGIN_FOLDER_DIR . 'includes/feeds/instagram/class-instagram-feed.php';
 
-        // Twitter OAuth. Turned off Because of Twitter API Changes.
-        // include FEED_THEM_SOCIAL_PLUGIN_FOLDER_DIR . 'includes/feeds/twitter/twitteroauth/twitteroauth.php';
-
-		// Twitter Feed. Turned off Because of Twitter API Changes.
-		// include FEED_THEM_SOCIAL_PLUGIN_FOLDER_DIR . 'includes/feeds/twitter/class-twitter-feed.php';
-
         // TikTok Feed.
         include FEED_THEM_SOCIAL_PLUGIN_FOLDER_DIR . 'includes/feeds/tiktok/class-tiktok-feed.php';
 
@@ -391,12 +376,6 @@ class Feed_Them_Social {
 
 		// Include Shortcodes.
 		include FEED_THEM_SOCIAL_PLUGIN_FOLDER_DIR . 'includes/feed-shortcode.php';
-
-        // Backwards compatability.
-        include FEED_THEM_SOCIAL_PLUGIN_FOLDER_DIR . '/admin/settings/backwards-compat/fts-backwards-compat-class.php';
-
-        // Upgrades
-        include FEED_THEM_SOCIAL_PLUGIN_FOLDER_DIR . '/admin/settings/backwards-compat/fts-upgrade-class.php';
 
         // Updater Classes.
 		include FEED_THEM_SOCIAL_PLUGIN_FOLDER_DIR . 'updater/updater-license-page.php';
@@ -417,7 +396,6 @@ class Feed_Them_Social {
         if ( did_action( 'elementor/loaded' ) ) {
             include FEED_THEM_SOCIAL_PLUGIN_FOLDER_DIR . '/admin/modules/elementor/includes/module.php';
         }
-
 
 	}
 

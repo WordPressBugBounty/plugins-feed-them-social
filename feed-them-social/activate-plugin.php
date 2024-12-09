@@ -41,7 +41,7 @@ class Activate_Plugin {
 	 */
 	public function add_actions_filters() {
 		// Register Activate Transient
-		register_activation_hook( __FILE__, array( $this, 'activate_transient' ) );
+		register_activation_hook( plugin_dir_path( __FILE__ ) . 'feed-them-social.php', array( $this, 'activate_transient' ) );
 
 		// Display Install Notice Add Action.
 		add_action( 'admin_notices', array( $this, 'display_install_notice' ) );
@@ -59,10 +59,10 @@ class Activate_Plugin {
 		add_filter( 'plugin_row_meta', array( $this, 'leave_feedback_link' ), 10, 2 );
 
 		// Plugin Activation Function.
-		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
+		register_activation_hook( plugin_dir_path( __FILE__ ) . 'feed-them-social.php', array( $this, 'plugin_activation' ) );
 
 		// Set Plugin Timezone.
-		add_action( 'admin_init', array( $this, 'set_plugin_timezone' ) );
+		add_action( 'admin_init', array( $this, 'set_plugin_review_option' ) );
 
 		// Review/Rating notice option names
 		$review_transient = 'fts_slick_rating_notice_waiting2024';
@@ -147,8 +147,10 @@ class Activate_Plugin {
 	 * @since 1.0.0
 	 */
 	public function activate_transient() {
+
 		// Set Activation Transient.
 		set_transient( 'fts_activated', 1 );
+
 		// Set/Update FTS Version.
 		update_option( 'fts_version', FEED_THEM_SOCIAL_VERSION );
 	}
@@ -164,9 +166,9 @@ class Activate_Plugin {
 		// Check the transient to see if we've just activated the plugin.
 		if ( get_transient( 'fts_activated' ) ) {
 			echo sprintf(
-				esc_html__( '%1$sThanks for installing Feed Them Social. To get started please view the %2$sSettings%3$s page.%4$s', 'feed-them-social' ),
+				esc_html__( '%1$sThanks for installing Feed Them Social. To get started create a %2$sNew Feed%3$s.%4$s', 'feed-them-social' ),
 				'<div class="notice notice-success updated is-dismissible"><p>',
-				'<a href="' . esc_url( 'edit.php?post_type=fts&page=fts-settings-page' ) . '">',
+				'<a href="' . esc_url( 'edit.php?post_type=fts&page=create-new-feed' ) . '">',
 				'</a>',
 				'</p></div>'
 			);
@@ -199,24 +201,75 @@ class Activate_Plugin {
 	 *
 	 * This function runs when WordPress completes its upgrade process. It iterates through each plugin updated to see if ours is included.
 	 *
-	 * @param array $upgrader_object Array The upgrader object.
 	 * @param array $options Array The options.
 	 * @since 1.0.0
 	 */
-	public function upgrade_completed( $upgrader_object, $options ) {
-		// The path to our plugin's main file.
-		$our_plugin = FEED_THEM_SOCIAL_PLUGIN_BASENAME;
-		// If an update has taken place and the updated type is plugins and the plugins element exists.
-		if ( 'update' === $options['action'] && 'plugin' === $options['type'] && isset( $options['plugins'] ) ) {
-			// Iterate through the plugins being updated and check if ours is there.
-			foreach ( $options['plugins'] as $plugin ) {
-				if ( $plugin === $our_plugin ) {
-					// Set a transient to record that our plugin has just been updated.
-					set_transient( 'fts_updated', 1 );
-				}
-			}
-		}
-	}
+    public function upgrade_completed( $options ) {
+        // The path to our plugin's main file.
+        $our_plugin = FEED_THEM_SOCIAL_PLUGIN_BASENAME;
+
+        // Check if $options is an array or object and process accordingly.
+        if ( is_array( $options ) ) {
+            // Handle plugin installation.
+            if ( isset( $options['action'], $options['type'], $options['plugin'] ) &&
+                $options['action'] === 'install' &&
+                $options['type'] === 'plugin' &&
+                $options['plugin'] === $our_plugin ) {
+                // error_log( 'Handle plugin installation/replacement (array).' );
+                $this->handle_plugin_event();
+                return;
+            }
+
+            // Handle plugin updates.
+            if ( isset( $options['action'], $options['type'], $options['plugins'] ) &&
+                $options['action'] === 'update' &&
+                $options['type'] === 'plugin' &&
+                in_array( $our_plugin, $options['plugins'], true ) ) {
+                // error_log( 'Handle plugin updates (array).' );
+                $this->handle_plugin_event();
+                return;
+            }
+        } elseif ( is_object( $options ) ) {
+            // Convert object to array for easier processing.
+            $options = (array) $options;
+
+            // Handle plugin installation.
+            if ( isset( $options['action'], $options['type'], $options['plugin'] ) &&
+                $options['action'] === 'install' &&
+                $options['type'] === 'plugin' &&
+                $options['plugin'] === $our_plugin ) {
+                // error_log( 'Handle plugin installation/replacement (object).' );
+                $this->handle_plugin_event();
+                return;
+            }
+
+            // Handle plugin updates.
+            if ( isset( $options['action'], $options['type'], $options['plugins'] ) &&
+                $options['action'] === 'update' &&
+                $options['type'] === 'plugin' &&
+                in_array( $our_plugin, $options['plugins'], true ) ) {
+                // error_log( 'Handle plugin updates (object).' );
+                $this->handle_plugin_event();
+                return;
+            }
+        }
+
+        // If $options doesn't match expected formats, log it for debugging.
+        // error_log( 'Unexpected upgrader options' );
+    }
+
+    /**
+     * Handle Plugin Event
+     *
+     * Common logic for when the plugin is updated or replaced.
+     */
+    protected function handle_plugin_event() {
+        // Set a transient to record that our plugin has just been updated/replaced.
+        set_transient( 'fts_updated', 1 );
+
+        // Set/Update new cron job for clearing cache.
+        $this->set_cron_job();
+    }
 
 	/**
 	 * Free Plugin Install Page Links
@@ -263,34 +316,42 @@ class Activate_Plugin {
 	 *
 	 * @since 1.0.0
 	 */
-	public function plugin_activation() {
-		// we add an db option to check then delete the db option after activation and the cache has emptied.
-		// the delete_option is on the feed-them-functions.php file at the bottom of the function ftg_clear_cache_script.
-		add_option( 'Feed_Them_Social_Activated_Plugin', 'feed-them-social' );
-	}
+    public function plugin_activation() {
 
-	/**
-	 * Set Plugin TimeZone
+        // Activation options to add to the fts_settings array.
+        $activation_options = array(
+            'fts_cache_time'     => '86400',
+            'fts_show_admin_bar' => '1',
+            'date_time_format'   => 'one-day-ago',
+            'timezone'           => 'America/New_York',
+        );
+
+        // Retrieve existing fts_settings or initialize an empty array.
+        $fts_settings = get_option('fts_settings', array());
+
+        // Only add keys from activation_options if they do not already exist in fts_settings.
+        foreach ($activation_options as $option_key => $option_value) {
+            if (!isset($fts_settings[$option_key])) {
+                $fts_settings[$option_key] = $option_value;
+            }
+        }
+
+        // Save the updated settings back to the database.
+        update_option('fts_settings', $fts_settings);
+
+        // Set/Update new cron job for clearing cache.
+        $this->set_cron_job();
+    }
+
+
+    /**
+	 * Set Plugin Review Option
 	 *
-	 * Set timezone options for activated plugin.
+	 * Set the reviews options for the plugin.
 	 *
 	 * @since 1.0.0
 	 */
-	public function set_plugin_timezone() {
-
-		if ( is_admin() && 'feed-them-social' === get_option( 'Feed_Them_Social_Activated_Plugin' ) ) {
-
-			// Activation Options.
-			$activation_options = array(
-				'ft-gallery-date-and-time-format' => 'one-day-ago',
-				'ft-gallery-timezone'             => 'America/New_York',
-			);
-
-			foreach ( $activation_options as $option_key => $option_value ) {
-				// We don't use update_option because we only want this to run for options that have not already been set by the user.
-				add_option( $option_key, $option_value );
-			}
-		}
+	public function set_plugin_review_option() {
 
         // Review Nag Check.
         // Must run this on admin_init so no errors on multisite after clicking any buttons.
@@ -320,7 +381,7 @@ class Activate_Plugin {
 				require_once ABSPATH . WPINC . '/pluggable.php';
 			}
 
-			if ( ! current_user_can( 'manage_options' ) || !isset( $_REQUEST['_wpnonce'] ) || false === wp_verify_nonce( $_REQUEST['_wpnonce'], 'ignore_rating_notice_nag2024' ) ) {
+			if ( ! current_user_can( 'manage_options' ) || !isset( $_REQUEST['_wpnonce'] ) || wp_verify_nonce( $_REQUEST['_wpnonce'], 'ignore_rating_notice_nag2024' ) === false ) {
 				wp_die(
 					__( 'Missing capability', 'feed-them-social' ),
 					__( 'Forbidden', 'feed-them-social' ),
@@ -330,9 +391,9 @@ class Activate_Plugin {
 				);
 			}
 
-			if ( '1' === $_GET[ $review_nag ] ) {
+			if ( $_GET[ $review_nag ] === '1' ) {
 				update_option( $review_option, 'dismissed2024' );
-			} elseif ( 'later' === $_GET[ $review_nag ] ) {
+			} elseif ( $_GET[ $review_nag ] === 'later' ) {
                 $time = 2 * WEEK_IN_SECONDS;
                 // Testing.
                 // $time = 2;
@@ -355,7 +416,7 @@ class Activate_Plugin {
 		$rating_notice_waiting = get_transient( $review_transient );
 		$notice_status         = get_option( $review_option, false );
 
-		if ( ! $rating_notice_waiting && ! ( 'dismissed2024' === $notice_status || 'pending2024' === $notice_status ) ) {
+		if ( ! $rating_notice_waiting && ! ( $notice_status === 'dismissed2024' || $notice_status === 'pending2024') ) {
             $time = 2 * WEEK_IN_SECONDS;
 			// Testing.
             // $time = 2;
@@ -433,4 +494,19 @@ class Activate_Plugin {
 			}
 		}
 	}
+
+    /**
+     * Set Cron Job
+     *
+     * Run this function when the plugin is activated, updated or auto-updated.
+     *
+     * @since 4.3.4
+     */
+    public function set_cron_job() {
+
+        // Set new cron job for clearing cache.
+        $cron_job = new Cron_Jobs( null, null, null, null );
+        $cron_job->fts_set_cron_job( 'clear-cache-set-cron-job', null, null );
+        // error_log('FTS Plugin Activated. Setting Cron Job from activate-plugin.php.');
+    }
 }
