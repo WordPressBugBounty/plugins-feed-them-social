@@ -1,5 +1,5 @@
 function fts_ClearCache( notice ) {
-    console.log('Clicked Clear Cache Function');
+    console.log('Clicked Clear Cache function');
     jQuery.ajax({
         data: {
             action: "fts_clear_cache_ajax",
@@ -22,27 +22,13 @@ function fts_ClearCache( notice ) {
 
 jQuery(document).ready(function ($) {
 
-    // Set these styles on the admin bar Clear Cache and Set Cache links.
-    $('#wp-admin-bar-feed_them_social_admin_bar_set_cache span').css({'display': 'block', 'line-height': '10px', 'color' : 'rgba(221,221,221,.57)'});
-    $('#wp-admin-bar-feed_them_social_admin_bar_set_cache').css('padding-bottom', '17px');
+    // Set the styles on the admin bar Clear Cache.
     $('#wp-admin-bar-feed_them_social_admin_set_cache div').css('cursor', 'pointer').hover(
         function() {
             $(this).css('color', '#72aee6');
         },
         function() {
             $(this).css('color', '');
-        }
-    );
-    $('#wp-admin-bar-feed_them_social_admin_bar_set_cache').hover(
-        function() {
-            $(this).find('span').css({
-                'color': '#fff'
-            });
-        },
-        function() {
-            $(this).find('span').css({
-                'color': ''
-            });
         }
     );
 
