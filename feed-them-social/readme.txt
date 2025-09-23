@@ -1,23 +1,23 @@
 === Feed Them Social - Social Media Feeds, Video, and Photo Galleries ===
 Contributors: slickremix
 Donate link: https://www.slickremix.com/
-Tags: Instagram, Facebook, TikTok, YouTube, Social
+Tags: instagram, facebook, tikTok, youtube, social
 Requires at least: 5.4
 Requires PHP: 7.0
-Tested up to: 6.8.1
-Stable tag: 4.3.8
+Tested up to: 6.8.2
+Stable tag: 4.3.9
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Custom social media feeds for Instagram, Facebook Pages, Album Photos, Videos & Covers, TikTok, & YouTube on pages, posts, widgets, Elementor & Beaver Builder.
+Custom social media feeds for Instagram, Facebook, TikTok, & YouTube. Works with Elementor, Beaver Builder, and Gutenberg blocks.
 
 == Description ==
 Easily Create and Display Customizable Social Feeds from Instagram, Facebook, TikTok, or YouTube. Responsive on Desktops, Tablets, and Mobile Devices.
 
 ###Features
  * **Quick** Install and Set up.
- * **Create** as many social feeds as you want!
- * **Display** social feeds on any post, page, or sidebar!
+ * **Create** as many social feeds as you want.
+ * **Display** social feeds on any post, page, or sidebar.
  * **Responsive** Design for Social Feeds on all devices.
  * **Saved** Feed options for easy editing.
  * **View** your Feed while editing the options.
@@ -124,6 +124,16 @@ Log into WordPress dashboard then click **Plugins** > **Add new** > Then under t
 16. Add the shortcode you generated from the settings page to any post, page, or text widget.
 
 == Changelog ==
+= Version 4.3.9 Monday, September 22nd, 2025 =
+  * Refactor: Use PSR-4 autoloading standard.
+  * Refactor: Classes and File Names to use PascalCase and functions to be camelCase.
+  * Fix: Settings > General > When deleting cache the cache time option was reset on settings page.
+  * Fix: System Info > Cron Job Cache time reported was incorrect.
+  * Fix: License Updater > Update notifications and version update description not showing.
+  * Remove: Twitter Code.
+  * Remove: Convert Legacy Shortcode option.
+  * Works with WordPress version 6.8.2
+
 = Version 4.3.8 Wednesday, May 14th, 2025 =
   * Fix: Warning message for _load_textdomain_just_in_time()
   * Fix: Spacing for Cache Settings time in admin menu bar.
@@ -131,7 +141,7 @@ Log into WordPress dashboard then click **Plugins** > **Add new** > Then under t
 
 = Version 4.3.7 Tuesday, April 15th, 2025 =
   * Works with WordPress version 6.8
-  * Note > Combined Streams Extension > Fix: YouTube Feed > feed_type added to fts_youtube_video_and_wrap function because only Channel ID Videos were showing up. This was causing videos to not appear if you were using a Playlist ID.
+  * Note > Combined Streams Extension > Fix: YouTube Feed > feed_type added to ftsYoutubeVideoAndWrap function because only Channel ID Videos were showing up. This was causing videos to not appear if you were using a Playlist ID.
   * Note > Combined Streams Extension > Fix: replace get_plugin_data() function with a constant FTS_PREMIUM_CURRENT_VERSION to get the plugin version. Fixes the Doing It Wrong warning.
   * Note > Combined Streams Extension > Fix: re-order yoda arguments.
 

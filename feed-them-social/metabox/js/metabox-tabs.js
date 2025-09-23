@@ -1,8 +1,8 @@
 // Grab the url so we can do stuff.
-var url_string = window.location.href;
-var url = new URL( url_string );
-var cpt_id = url.searchParams.get("post");
-var feed_type = url.searchParams.get("feed_type");
+const url_string = window.location.href;
+let url = new URL( url_string );
+let cpt_id = url.searchParams.get("post");
+let feed_type = url.searchParams.get("feed_type");
 
 jQuery(document).ready(ftg_admin_gallery_tabs);
 
@@ -43,11 +43,11 @@ function ftg_admin_gallery_tabs() {
     jQuery('ul.nav-tabs').each(function () {
         // For each set of tabs, we want to keep track of
         // which tab is active and its associated content
-        var $active, $content, $links = jQuery(this).find('a');
+        let $active, $content, $links = jQuery(this).find('a');
 
         // If the location.hash matches the data-key of one of the links, use that as the active tab.
         // If no match is found, use the first link as the initial active tab.
-        var hashKey = location.hash.substring(1); // Remove the '#' from the hash
+        const hashKey = location.hash.substring(1); // Remove the '#' from the hash
         $active = jQuery($links.filter('[data-key="' + hashKey + '"]')[0] || $links[0]);
         $active.addClass('active');
 
@@ -80,17 +80,15 @@ function ftg_admin_gallery_tabs() {
 
 function fts_ajax_cpt_save_token() {
 
-    var newUrl = ftg_mb_tabs.submit_msgs.fts_post;
+    const newUrl = ftg_mb_tabs.submit_msgs.fts_post;
     window.location.replace( newUrl );
-    // Testing removing this id #fts-feed-type because it just makes the process so damn jumpy
-    // window.location.replace( newUrl + '#fts-feed-type' );
+    // Testing removing this id .fts-token-wrap because it just makes the process so damn jumpy
+    // window.location.replace( newUrl + '.fts-token-wrap' );
 
-    //alert('test1');
 
     jQuery( '.post-type-fts .wrap form#post' ).ajaxSubmit({
         beforeSend: function () {
 
-            //alert('test2');
             jQuery('#ftg-saveResult').html("<div class='ftg-overlay-background'><div class='ftg-relative-wrap-overlay'><div id='ftg-saveMessage' class='ftg-successModal ftg-saving-form'></div></div></div>");
             jQuery('#ftg-saveMessage').append(ftg_mb_tabs.submit_msgs.saving_msg).show();
             jQuery('#publishing-action .spinner').css("visibility", "visible");
@@ -120,7 +118,7 @@ function fts_ajax_cpt_save( shortcodeConverted, should_we_empty_cache ) {
     jQuery( '.post-type-fts .wrap form#post' ).ajaxSubmit({
         beforeSend: function () {
             if( 'no-save-message' !== shortcodeConverted ) {
-                jQuery('#ftg-saveResult').html("<div class='ftg-overlay-background'><div class='ftg-relative-wrap-overlay'><div id='ftg-saveMessage'    class='ftg-successModal ftg-saving-form'></div></div></div>");
+                jQuery('#ftg-saveResult').html("<div class='ftg-overlay-background'><div class='ftg-relative-wrap-overlay'><div id='ftg-saveMessage' class='ftg-successModal ftg-saving-form'></div></div></div>");
                 jQuery('#ftg-saveMessage').append(ftg_mb_tabs.submit_msgs.saving_msg).show();
                 jQuery('#publishing-action .spinner').css("visibility", "visible");
             }
@@ -152,7 +150,7 @@ function fts_ajax_cpt_save( shortcodeConverted, should_we_empty_cache ) {
             jQuery('.updatefrombottom a.button-primary').html("Update");
 
             // Remove any hashtag data from the url
-            var hash2 = window.location.hash.replace('#', '');
+            let hash2 = window.location.hash.replace('#', '');
 
             // #fts-feed-type: comes from the url populated by slickremix where we get the access token from.
             // #feed_setup: comes from clicking on the Feed Setup tab
@@ -180,11 +178,9 @@ function refresh_feed_ajax(should_we_empty_cache) {
         fts_ClearCache();
     }
 
-    // return false;
-
     jQuery.ajax({
         data: {
-            action: 'fts_refresh_feed_ajax',
+            action: 'ftsRefreshFeedAjax',
             cpt_id: cpt_id,
             _wpnonce: ftg_mb_tabs.ajaxRefreshFeedNonce
         },
@@ -198,7 +194,6 @@ function refresh_feed_ajax(should_we_empty_cache) {
             // 'Feed Them Social:' is text I added to the start of the error messages now in all feeds.
             // This way we can also detect it on the back end.
             if( response.indexOf('Feed Them Social:') > -1 ){
-                //alert('test');
                 jQuery( '.fts-shortcode-content' ).html( response );
                 jQuery( '.fts-loading-feed-admin' ).remove();
             }
@@ -305,46 +300,6 @@ function fts_show_hide_shortcode_feed( feed ) {
 
 function checkAnyFormFieldEdited() {
 
-    jQuery('#instagram_feed input, #facebook_feed input, #twitter_feed input, #youtube_feed input, #combine_streams_feed input').keypress(function(e) { // text written
-        // SRL: turning this one off for now. I think the change even further down is enough for now. Need more testing.
-
-        // fts_ajax_cpt_save( 'no-save-message' );
-        //  alert('test 1');
-    });
-
-    jQuery('#instagram_feed input, #facebook_feed input, #twitter_feed input, #youtube_feed input, #combine_streams_feed input').keyup(function(e) {
-        if (e.keyCode == 8 || e.keyCode == 46) { //backspace and delete key
-            //     alert('test backspace or delete key');
-            // SRL: turning this one off for now. I think the change even further down is enough for now. Need more testing.
-
-            //    fts_ajax_cpt_save( 'no-save-message' );
-        } else { // rest ignore
-            e.preventDefault();
-        }
-    });
-
-    jQuery('select').keyup(function(e) {
-        // SRL: turning this one off for now. I think the change even further down is enough for now. Need more testing.
-
-        //fts_ajax_cpt_save( 'no-save-message' );
-
-        // alert('test 2');
-    });
-
-    jQuery('#instagram_feed, #facebook_feed, #twitter_feed, #youtube_feed, #combine_streams_feed').on('input, select, :checkbox', function() {
-        // SRL: turning this one off for now. I think the change even further down is enough for now. Need more testing.
-
-        // fts_ajax_cpt_save( 'no-save-message' );
-        // alert('test 3');
-    });
-
-    jQuery('#instagram_feed input, #facebook_feed input, #twitter_feed input, #youtube_feed input, #combine_streams_feed input').bind('paste', function(e) { // text pasted
-        // SRL: turning this one off for now. I think the change event further down is enough for now. Need more testing.
-
-        // fts_ajax_cpt_save( 'no-save-message' );
-        // alert('test 4');
-    });
-
     jQuery('#instagram_feed select, #instagram_feed input, ' +
         '#facebook_feed select, #facebook_feed input, ' +
         '#tiktok_feed select, #tiktok_feed input, ' +
@@ -380,8 +335,6 @@ function checkAnyFormFieldEdited() {
         else {
             should_we_empty_cache = 'do-not-empty-cache';
         }
-        // Testing
-        // alert(should_we_empty_cache);
 
         // Select or input element changed. Those are the only 2 items so far we are using in the options.
         fts_ajax_cpt_save( 'no-save-message', should_we_empty_cache );
@@ -399,8 +352,8 @@ jQuery(document).ready(function ($) {
 
     // This is for the responsive options tabs
     $('.fts-responsive-options-wrap span').click(function() {
-        var parentWrap = $(this).closest('.fts-responsive-wrap');
-        var target = $(this).data('target');
+        let parentWrap = $(this).closest('.fts-responsive-wrap');
+        const target = $(this).data('target');
 
         // Remove active class from all spans within the same .fts-responsive-options-wrap
         parentWrap.find('.fts-responsive-options-wrap span').removeClass('fts-responsive-tab-active');
@@ -432,7 +385,7 @@ jQuery(document).ready(function ($) {
     // Show the proper tab if this link type is clicked on any tab of ours
     jQuery('.tab-content-wrap').on('click', '.fts-facebook-successful-api-token', function (e) {
         jQuery('.tab5 a').click();
-        var clickedLink = $('.tab5 a').attr('href');
+        const clickedLink = $('.tab5 a').attr('href');
         // push it into the url
         location.hash = clickedLink;
         fts_show_hide_shortcode_feed( 'facebook');
@@ -443,7 +396,7 @@ jQuery(document).ready(function ($) {
 
     jQuery('.tab-content-wrap').on('click', '.fts-instagram-successful-api-token', function (e) {
         jQuery('.tab4 a').click();
-        var clickedLink = $('.tab4 a').attr('href');
+        const clickedLink = $('.tab4 a').attr('href');
         jQuery('#instagram_feed_type').bind('change', function (e) {
             jQuery(this).val('basic');
         }).change();
@@ -457,7 +410,7 @@ jQuery(document).ready(function ($) {
 
     jQuery('.tab-content-wrap').on('click', '.fts-instagram-business-successful-api-token', function (e) {
         jQuery('.tab4 a').click();
-        var clickedLink = $('.tab4 a').attr('href');
+        const clickedLink = $('.tab4 a').attr('href');
         // push it into the url
         location.hash = clickedLink;
         fts_show_hide_shortcode_feed('instagram');
@@ -467,7 +420,7 @@ jQuery(document).ready(function ($) {
 
     jQuery('.tab-content-wrap').on('click', '.fts-twitter-successful-api-token', function (e) {
         jQuery('.tab6 a').click();
-        var clickedLink = $('.tab6 a').attr('href');
+        const clickedLink = $('.tab6 a').attr('href');
         // push it into the url
         location.hash = clickedLink;
         fts_show_hide_shortcode_feed('twitter');
@@ -477,7 +430,7 @@ jQuery(document).ready(function ($) {
 
     jQuery('.tab-content-wrap').on('click', '.fts-youtube-successful-api-token', function (e) {
         jQuery('.tab7 a').click();
-        var clickedLink = $('.tab7 a').attr('href');
+        const clickedLink = $('.tab7 a').attr('href');
         // push it into the url
         location.hash = clickedLink;
         fts_show_hide_shortcode_feed('youtube');
@@ -487,7 +440,7 @@ jQuery(document).ready(function ($) {
 
     jQuery('.tab-content-wrap').on('click', '.fts-combine-successful-api-token', function (e) {
         jQuery('.tab8 a').click();
-        var clickedLink = $('.tab8 a').attr('href');
+        const clickedLink = $('.tab8 a').attr('href');
         // push it into the url
         location.hash = clickedLink;
         fts_show_hide_shortcode_feed('combined');
@@ -495,7 +448,7 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
     });
 
-    var hash = window.location.hash.replace('#', '');
+    let hash = window.location.hash.replace('#', '');
     if (hash) {
         document.getElementById(hash).style.display = 'block'
     }
@@ -504,7 +457,6 @@ jQuery(document).ready(function ($) {
     jQuery('.post-type-fts .wrap form#post').submit( function (e) {
         e.preventDefault();
         fts_ajax_cpt_save();
-        //  alert('yes');
     });
 
     if( location.hash === '#instagram_feed' ||
@@ -525,7 +477,7 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
 
         // get the id
-        var clickedLink = $(this).data('key');
+        let clickedLink = $(this).data('key');
 
         if( 'feed_setup' === clickedLink ){
             jQuery( '.fts-shortcode-view' ).css('display', 'none');
@@ -557,7 +509,7 @@ jQuery(document).ready(function ($) {
         }
 
         // Store the current scroll position
-        var scrollPos = $(window).scrollTop();
+        const scrollPos = $(window).scrollTop();
 
         // Push the hash to the URL without causing the scroll
         location.hash = clickedLink;
@@ -573,7 +525,7 @@ jQuery(document).ready(function ($) {
         // Prevent the anchor's default click action
         e.preventDefault();
 
-        var myURL = document.location;
+        const myURL = document.location;
         document.location = myURL + "&tab=" + jQuery(this).attr('id');
 
     });
@@ -639,7 +591,7 @@ jQuery(document).ready(function ($) {
     }
 });
 
-function fts_encrypt_token_ajax( access_token, token_type , id, firstRequest ) {
+function ftsEncryptTokenAjax( access_token, token_type , id, firstRequest ) {
 
     console.log( 'access_token: ' + JSON.stringify(access_token) );
     console.log( 'token_type: ' + token_type );
@@ -648,7 +600,7 @@ function fts_encrypt_token_ajax( access_token, token_type , id, firstRequest ) {
 
     jQuery.ajax({
         data: {
-            action: 'fts_encrypt_token_ajax',
+            action: 'ftsEncryptTokenAjax',
             cpt_id: cpt_id,
             access_token: JSON.stringify( access_token ),
             token_type: token_type,
@@ -660,14 +612,13 @@ function fts_encrypt_token_ajax( access_token, token_type , id, firstRequest ) {
 
             console.log( response );
 
-            var data = JSON.parse( response );
+            let data = JSON.parse( response );
 
             console.log( data );
 
             // Add the OG token to the input value and add the encrypted token to the data-attribute.
             if( 'firstRequest' === firstRequest) {
 
-                // alert('step 1');
                 jQuery( id ).val('');
                 jQuery( id ).val( jQuery( id ).val() + data.encrypted );
                 jQuery( id ).attr('data-token', 'encrypted').attr( 'value', data.encrypted ) ;
@@ -679,7 +630,6 @@ function fts_encrypt_token_ajax( access_token, token_type , id, firstRequest ) {
                 if( 'instagram_business' === data.feed_type ||
                     'facebook_business' === data.feed_type ){
 
-                    // alert( data.feed_type );
                     location.reload();
                 }
                 if( 'instagram_basic' === data.feed_type ||
@@ -687,14 +637,11 @@ function fts_encrypt_token_ajax( access_token, token_type , id, firstRequest ) {
                     'youtube' === data.feed_type ){
 
                     // alert( data.feed_type );
-                    var newUrl = ftg_mb_tabs.submit_msgs.fts_post;
+                    const newUrl = ftg_mb_tabs.submit_msgs.fts_post;
                     window.location.replace( newUrl );
-                    // Testing removing this id #fts-feed-type because it just makes the process so damn jumpy
-                   // window.location.replace( newUrl + '#fts-feed-type' );
                 }
             }
 
-            // alert('step 2');
             console.log( id + ': OG Token and Encrypted Response........: ' + response );
         },
         error: function ( response ) {
@@ -730,22 +677,22 @@ function fts_show_decrypt_token_text(){
             jQuery( this ).addClass('fts-copy-decrypted-token').removeClass('fts-remove-decrypted-token');
         }
         else {
-            var encrypted_token = jQuery(this).parent().parent().find('input').attr('value');
-            var id              = jQuery(this).parent().parent().find('input').attr('id');
+            const encrypted_token = jQuery(this).parent().parent().find('input').attr('value');
+            const id              = jQuery(this).parent().parent().find('input').attr('id');
             // Decrypt the token for debugging.
-            fts_decrypt_token_ajax( encrypted_token, id );
+            ftsDecryptTokenAjax( encrypted_token, id );
         }
     });
 }
 
-function fts_decrypt_token_ajax( encrypted_token, id ) {
+function ftsDecryptTokenAjax( encrypted_token, id ) {
 
     console.log( 'access_token: ' + encrypted_token );
     console.log( 'id: ' + id );
 
     jQuery.ajax({
         data: {
-            action: 'fts_decrypt_token_ajax',
+            action: 'ftsDecryptTokenAjax',
             encrypted_token: encrypted_token,
             _wpnonce: ftg_mb_tabs.ajaxDecryptNonce
         },

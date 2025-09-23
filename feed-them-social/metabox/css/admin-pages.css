@@ -6,14 +6,6 @@
     font-style: normal;
     -webkit-font-smoothing: antialiased
 }
-.tab-content .ft-gallery-select-thumbn .ft-gallery-myCheckbox {
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    width: 20px;
-    height: 20px;
-    line-height: 20px
-}
 
 #ft_watermark_image_sizes, .feed-them_page_ft-gallery-settings-page .ft-gallery-gal-load-more-options-wrap, .ft-gallery-hide-me, .ft-gallery-myCheckbox input, .ft-gallery-smart-image-checkbox-wrap, .ft-global-option-wrap-, .ft-global-option-wrap-ft-watermark-image input, .ft-global-option-wrap-ft-watermark-image label, .ft-watermark-hide-these-options, .ftg-global-model-product-wrap .ftg-settings-overlay, .ss-hidden {
     display: none !important
@@ -2584,13 +2576,13 @@ body.fts_page_ft-gallery-sidebar-builder-page .ui-icon {
     margin-bottom: 15px
 }
 
-#fts-feed-type h3 {
+.fts-token-wrap h3 {
     text-transform: none !important;
     cursor: pointer;
     font-weight: 400
 }
 
-#fts-feed-type h3 span {
+.fts-token-wrap h3 span {
     color: #1aae1f;
     pointer-events: none
 }
