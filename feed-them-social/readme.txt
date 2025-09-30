@@ -5,7 +5,7 @@ Tags: instagram, facebook, tikTok, youtube, social
 Requires at least: 5.4
 Requires PHP: 7.0
 Tested up to: 6.8.2
-Stable tag: 4.3.9
+Stable tag: 4.4.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,12 @@ Log into WordPress dashboard then click **Plugins** > **Add new** > Then under t
 16. Add the shortcode you generated from the settings page to any post, page, or text widget.
 
 == Changelog ==
+= Version 4.4.0 Monday, September 29th, 2025 =
+  * Fix: The uninstall file was causing issue not allowing plugin to be deleted from Plugins page.
+  * Fix: YouTube Feed > remove http from url types
+  * Fix: Instagram Feed > rename let url to fts_url to prevent conflicts with some installs.
+  * Fix: Admin menu icon to be perfectly vertically aligned.
+
 = Version 4.3.9 Monday, September 22nd, 2025 =
   * Refactor: Use PSR-4 autoloading standard.
   * Refactor: Classes and File Names to use PascalCase and functions to be camelCase.
